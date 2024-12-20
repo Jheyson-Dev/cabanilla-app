@@ -13,6 +13,8 @@ import {
   User,
   ChevronLeft,
   LogOut,
+  Warehouse,
+  LandPlot,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -20,6 +22,8 @@ const sidebarItems = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/" },
   { name: "Usuario", icon: User, href: "/user" },
   { name: "Inventario", icon: Package, href: "/inventario" },
+  { name: "Area", icon: LandPlot, href: "/area" },
+  { name: "Almacen", icon: Warehouse, href: "/almacen" },
   { name: "Vales de Combustible", icon: Fuel, href: "/vales-combustible" },
   { name: "Configuración", icon: Settings, href: "/configuracion" },
 ];

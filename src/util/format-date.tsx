@@ -1,6 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 
-export const convertTimestampToDate = (timestamp: Timestamp): string => {
+export const convertTimestampToDate = (
+  timestamp: Timestamp | undefined
+): string => {
+  if (!timestamp) return "Fecha no disponible";
   const date = timestamp.toDate();
   return date.toLocaleDateString("es-ES", {
     year: "numeric",
@@ -10,8 +13,9 @@ export const convertTimestampToDate = (timestamp: Timestamp): string => {
 };
 
 export const convertTimestampToDetailedDate = (
-  timestamp: Timestamp
+  timestamp: Timestamp | undefined
 ): string => {
+  if (!timestamp) return "Fecha no disponible";
   const date = timestamp.toDate();
   return date.toLocaleString("es-ES", {
     year: "numeric",
@@ -23,13 +27,14 @@ export const convertTimestampToDetailedDate = (
   });
 };
 
-export const convertTimestampToMinimalDate = (timestamp: Timestamp): string => {
+export const convertTimestampToMinimalDate = (
+  timestamp: Timestamp | undefined
+): string => {
+  if (!timestamp) return "Fecha no disponible";
   const date = timestamp.toDate();
   return date.toLocaleString("es-ES", {
     year: "numeric",
     month: "numeric",
     day: "numeric",
-    // hour: "2-digit",
-    // minute: "2-digit",
   });
 };

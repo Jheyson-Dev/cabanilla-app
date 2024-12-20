@@ -1,4 +1,8 @@
+import AlmacenesPage from "@/components/pages/almacen/almacen";
+import AreasPage from "@/components/pages/area/area";
+import { AreaEdith } from "@/components/pages/area/area-edith";
 import { Dashboard } from "@/components/pages/dashboard/dashboard";
+import InventariosPage from "@/components/pages/inventario/inventario";
 import Layout from "@/components/pages/Layout";
 import Login from "@/components/pages/Login";
 import UsersPage from "@/components/pages/user/user";
@@ -33,6 +37,38 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <UserEdith />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "inventario",
+        element: (
+          <PrivateRoute>
+            <InventariosPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "area",
+        element: (
+          <PrivateRoute>
+            <AreasPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "area/:id",
+        element: (
+          <PrivateRoute>
+            <AreaEdith />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "almacen",
+        element: (
+          <PrivateRoute>
+            <AlmacenesPage />
           </PrivateRoute>
         ),
       },
