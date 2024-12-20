@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   LayoutDashboard,
-  Package,
+  // Package,
   Fuel,
   Settings,
   User,
@@ -15,13 +15,15 @@ import {
   LogOut,
   Warehouse,
   LandPlot,
+  LayoutList,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 const sidebarItems = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/" },
   { name: "Usuario", icon: User, href: "/user" },
-  { name: "Inventario", icon: Package, href: "/inventario" },
+  { name: "Productos", icon: LayoutList, href: "/product" },
+  // { name: "Inventario", icon: Package, href: "/inventario" },
   { name: "Area", icon: LandPlot, href: "/area" },
   { name: "Almacen", icon: Warehouse, href: "/almacen" },
   { name: "Vales de Combustible", icon: Fuel, href: "/vales-combustible" },

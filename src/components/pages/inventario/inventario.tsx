@@ -10,16 +10,19 @@ import {
 
 import { ProductForm } from "./inventario-form";
 
+import { useProducts } from "@/hooks";
+import { ProductList } from "./inventario-list";
+
 export default function InventariosPage() {
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
 
   // const queryClient = useQueryClient();
-  //   const { data, isLoading, isError } = useUsers();
+  const { data, isLoading, isError } = useProducts();
 
   return (
     <div className="container py-10 mx-auto">
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-3xl font-bold">Administración de Inventario</h1>
+        <h1 className="text-3xl font-bold">Administración de Productos</h1>
         <Sheet open={isCreateFormOpen} onOpenChange={setIsCreateFormOpen}>
           <SheetTrigger asChild>
             <Button>Crear Producto</Button>
@@ -40,7 +43,11 @@ export default function InventariosPage() {
       </div>
       <div className="flex gap-6">
         <div className={`flex-1 transition-all`}>
-          {/* <UserList data={data || []} isError={isError} isLoading={isLoading} /> */}
+          <ProductList
+            data={data || []}
+            isError={isError}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </div>

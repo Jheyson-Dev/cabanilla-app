@@ -18,14 +18,15 @@ interface ProductFormProps {
 }
 
 const schema = yup.object().shape({
-  name: yup.string().required("Name is required"),
-  description: yup.string().required("Description is required"),
+  name: yup.string().trim().required("Name is required"),
+  description: yup.string().trim().required("Description is required"),
 });
 
 export function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -39,17 +40,21 @@ export function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
   const queryClient = useQueryClient();
 
   const onSubmitHandler: SubmitHandler<any> = async (data) => {
+    // Eliminar espacios adicionales antes de enviar los datos
+    data.name = data.name.trim();
+    data.description = data.description.trim();
+
     setLoading(true);
     try {
       await createProduct(data);
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["productos"],
         exact: true,
       });
       toast.success("Producto creado correctamente");
       onSubmit();
     } catch (error) {
-      console.error("Error creating product: ", error);
+      toast.error((error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -63,12 +68,20 @@ export function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
         <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" {...register("name")} />
+            <Input
+              id="name"
+              {...register("name")}
+              onBlur={(e) => setValue("name", e.target.value.trim())}
+            />
             {errors.name && <span>{errors.name.message}</span>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Input id="description" {...register("description")} />
+            <Input
+              id="description"
+              {...register("description")}
+              onBlur={(e) => setValue("description", e.target.value.trim())}
+            />
             {errors.description && <span>{errors.description.message}</span>}
           </div>
           <div className="flex justify-end space-x-2">

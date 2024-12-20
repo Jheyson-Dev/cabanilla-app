@@ -3,6 +3,7 @@ import AreasPage from "@/components/pages/area/area";
 import { AreaEdith } from "@/components/pages/area/area-edith";
 import { Dashboard } from "@/components/pages/dashboard/dashboard";
 import InventariosPage from "@/components/pages/inventario/inventario";
+import { ProductEdith } from "@/components/pages/inventario/inventario-edith";
 import Layout from "@/components/pages/Layout";
 import Login from "@/components/pages/Login";
 import UsersPage from "@/components/pages/user/user";
@@ -41,10 +42,18 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "inventario",
+        path: "product",
         element: (
           <PrivateRoute>
             <InventariosPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "product/:id",
+        element: (
+          <PrivateRoute>
+            <ProductEdith />
           </PrivateRoute>
         ),
       },
