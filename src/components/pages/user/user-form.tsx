@@ -43,6 +43,7 @@ export function UserForm({ onSubmit, onCancel }: UserFormProps) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -78,6 +79,8 @@ export function UserForm({ onSubmit, onCancel }: UserFormProps) {
     }
   };
 
+  const selectedRole = watch("role");
+
   return (
     <div>
       {loading ? (
@@ -112,15 +115,15 @@ export function UserForm({ onSubmit, onCancel }: UserFormProps) {
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
             <Select
-              {...register("role")}
+              value={selectedRole}
               onValueChange={(value) => setValue("role", value as Role)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={"USER"}>User</SelectItem>
-                <SelectItem value={"ADMIN"}>Admin</SelectItem>
+                <SelectItem value="USER">User</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
               </SelectContent>
             </Select>
             {errors.role && <span>{errors.role.message}</span>}

@@ -12,6 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { updateUser } from "@/services";
@@ -57,8 +58,6 @@ export const UserEdith: FC = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    // Aquí puedes manejar la actualización del usuario
-    console.log(data);
     if (!id) {
       toast.error("ID de usuario no encontrado");
       return;
@@ -82,12 +81,6 @@ export const UserEdith: FC = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log(id);
-  //   return () => {
-  //     reset();
-  //   };
-  // }, [id]);
   const navigate = useNavigate();
 
   return (
@@ -170,15 +163,24 @@ export const UserEdith: FC = () => {
                 defaultValue={user?.role}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>Selecciona un rol</SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un rol" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="USER">User</SelectItem>
                       <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="JEFE-AREA">Jefe de Area</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
+            {errors.role && (
+              <span className="col-span-3 text-red-500">
+                {errors.role.message}
+              </span>
+            )}
+
             <Label className="flex items-center gap-4">Status:</Label>
             <div className="w-full col-span-2">
               <Controller
@@ -187,7 +189,9 @@ export const UserEdith: FC = () => {
                 defaultValue={String(user?.status)}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>Selecciona un estado</SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un estado" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Active</SelectItem>
                       <SelectItem value="false">Inactive</SelectItem>
@@ -196,6 +200,11 @@ export const UserEdith: FC = () => {
                 )}
               />
             </div>
+            {errors.status && (
+              <span className="col-span-3 text-red-500">
+                {errors.status.message}
+              </span>
+            )}
 
             <Label className="flex items-center gap-4">Fecha Creacion:</Label>
             <Input
