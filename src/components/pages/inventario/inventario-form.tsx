@@ -46,7 +46,7 @@ export function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
 
     setLoading(true);
     try {
-      await createProduct(data);
+      await createProduct({ ...data, stock: 0 });
       queryClient.invalidateQueries({
         queryKey: ["productos"],
         exact: true,

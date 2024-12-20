@@ -13,9 +13,10 @@ import {
   User,
   ChevronLeft,
   LogOut,
-  Warehouse,
+  // Warehouse,
   LandPlot,
   LayoutList,
+  ArrowLeftRight,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -25,7 +26,8 @@ const sidebarItems = [
   { name: "Productos", icon: LayoutList, href: "/product" },
   // { name: "Inventario", icon: Package, href: "/inventario" },
   { name: "Area", icon: LandPlot, href: "/area" },
-  { name: "Almacen", icon: Warehouse, href: "/almacen" },
+  // { name: "Almacen", icon: Warehouse, href: "/almacen" },
+  { name: "Operaciones", icon: ArrowLeftRight, href: "/operation" },
   { name: "Vales de Combustible", icon: Fuel, href: "/vales-combustible" },
   { name: "Configuración", icon: Settings, href: "/configuracion" },
 ];

@@ -6,6 +6,7 @@ import InventariosPage from "@/components/pages/inventario/inventario";
 import { ProductEdith } from "@/components/pages/inventario/inventario-edith";
 import Layout from "@/components/pages/Layout";
 import Login from "@/components/pages/Login";
+import OperacionesPage from "@/components/pages/operacion/operacion";
 import UsersPage from "@/components/pages/user/user";
 import { UserEdith } from "@/components/pages/user/user-edith";
 import PrivateRoute from "@/components/security/protected-routes";
@@ -70,6 +71,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AreaEdith />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "operation",
+        element: (
+          <PrivateRoute>
+            <OperacionesPage />
           </PrivateRoute>
         ),
       },
