@@ -7,7 +7,7 @@ import {
   LayoutDashboard,
   // Package,
   Fuel,
-  Settings,
+  // Settings,
   User,
   ChevronLeft,
   LogOut,

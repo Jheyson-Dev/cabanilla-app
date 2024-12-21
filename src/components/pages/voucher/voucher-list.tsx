@@ -7,12 +7,11 @@ import {
   Table,
 } from "@/components/ui/table";
 // import { VoucherListSkeleton } from "./voucher-list-skeleton"; // Asegúrate de tener este componente
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+// import { useState } from "react";
 // import { VoucherDelete } from "./voucher-delete"; // Asegúrate de tener este componente
 import { FuelVoucher } from "@/services/voucher.service";
-import { convertTimestampToMinimalDate } from "@/util/format-date";
 import { Link } from "react-router-dom";
 
 interface VoucherListProps {
@@ -26,8 +25,8 @@ export function VoucherList({
   isLoading,
   isError,
 }: VoucherListProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [voucherSelected, setVoucherSelected] = useState<string>();
+  // const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // const [voucherSelected, setVoucherSelected] = useState<string>();
 
   if (isLoading) {
     // return <VoucherListSkeleton />;
@@ -37,11 +36,11 @@ export function VoucherList({
     return <div>Error loading vouchers.</div>;
   }
 
-  const handleDelete = (id: string) => {
-    setIsDeleteDialogOpen(true);
-    setVoucherSelected(id);
-    console.log("Eliminar voucher con el ID:", id);
-  };
+  // const handleDelete = (id: string) => {
+  //   setIsDeleteDialogOpen(true);
+  //   setVoucherSelected(id);
+  //   console.log("Eliminar voucher con el ID:", id);
+  // };
 
   return (
     <div className="p-4 overflow-x-auto">

@@ -34,9 +34,8 @@ import { createMovimiento, Movimiento } from "@/services/operacion.service";
 import { useAuthStore } from "@/store/authStore";
 import { convertTimestampToDetailedDate } from "@/util/format-date";
 import { Area } from "@/services";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Definir el esquema de validación con Yup
 const schema = yup.object().shape({
