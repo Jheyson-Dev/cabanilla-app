@@ -27,7 +27,7 @@ const sidebarItems = [
   // { name: "Almacen", icon: Warehouse, href: "/almacen" },
   { name: "Operaciones", icon: ArrowLeftRight, href: "/operation" },
   { name: "Vales de Combustible", icon: Fuel, href: "/vales-combustible" },
-  { name: "Configuración", icon: Settings, href: "/configuracion" },
+  // { name: "Configuración", icon: Settings, href: "/configuracion" },
 ];
 
 export function Sidebar() {
@@ -84,7 +84,7 @@ export function Sidebar() {
           ))}
         </nav>
       </ScrollArea>
-      <div className=" mb-5  p-2">
+      <div className="p-2 mb-5 ">
         <NavLink
           to={"/login"}
           className={cn(
@@ -93,7 +93,7 @@ export function Sidebar() {
           )}
           onClick={signOut}
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="w-5 h-5" />
           <span
             className={cn(
               "transition-all duration-300 ease-in-out",

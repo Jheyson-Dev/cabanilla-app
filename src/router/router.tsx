@@ -9,6 +9,9 @@ import Login from "@/components/pages/Login";
 import OperacionesPage from "@/components/pages/operacion/operacion";
 import UsersPage from "@/components/pages/user/user";
 import { UserEdith } from "@/components/pages/user/user-edith";
+import VoucherPage from "@/components/pages/voucher/voucher";
+import { VoucherForm } from "@/components/pages/voucher/voucher-form";
+import { VoucherPreview } from "@/components/pages/voucher/voucher-preview";
 import PrivateRoute from "@/components/security/protected-routes";
 // import NotFound from "@/components/pages/not-found";
 import { createBrowserRouter } from "react-router-dom";
@@ -79,6 +82,30 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <OperacionesPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "vales-combustible",
+        element: (
+          <PrivateRoute>
+            <VoucherPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "vales-combustible/create",
+        element: (
+          <PrivateRoute>
+            <VoucherForm />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "vales-combustible/preview/:id",
+        element: (
+          <PrivateRoute>
+            <VoucherPreview />
           </PrivateRoute>
         ),
       },

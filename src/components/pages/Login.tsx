@@ -93,7 +93,7 @@ const Login: React.FC = () => {
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid-col-1 gap-2 grid">
+              <div className="grid gap-2 grid-col-1">
                 <Label htmlFor="username">Usuario:</Label>
                 <Input
                   type="text"
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
                   <p className="text-red-500">{errors.username.message}</p>
                 )}
               </div>
-              <div className="grid-col-1 gap-2 grid">
+              <div className="grid gap-2 grid-col-1">
                 <Label htmlFor="password">Contraseña</Label>
                 <Input
                   type="password"
