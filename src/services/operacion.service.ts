@@ -89,68 +89,9 @@ export const getMovimientoById = async (id: string): Promise<Movimiento> => {
   }
 };
 
-// export const createMovimiento = async (movimiento: {
-//   tipo: "ingreso" | "salida" | "prestamo" | "retorno" | "transferencia";
-//   producto: string;
-//   descripcion: string;
-//   cantidad: number;
-//   usuario: string;
-//   observations?: string;
-//   tiendaDestino?: string;
-//   tiendaOrigen?: string;
-//   prestamoId?: string;
-// }) => {
-//   try {
-//     const newMovimiento = {
-//       ...movimiento,
-//       createdAt: serverTimestamp(),
-//       status: "activo", // Establecer el estado inicial como activo
-//     };
-
-//     const docRef = await addDoc(movimientosCollection, newMovimiento);
-
-//     // Crear una consulta para obtener el producto
-//     const productosCollection = collection(db, "productos");
-//     const q = query(
-//       productosCollection,
-//       where("name", "==", movimiento.producto)
-//     );
-//     const querySnapshot = await getDocs(q);
-
-//     if (!querySnapshot.empty) {
-//       const productoDoc = querySnapshot.docs[0];
-//       const productoData = productoDoc.data();
-//       let nuevoStock = +productoData.stock;
-
-//       // Actualizar el stock según el tipo de movimiento
-//       if (movimiento.tipo === "ingreso") {
-//         nuevoStock += +movimiento.cantidad;
-//       } else if (
-//         movimiento.tipo === "salida" ||
-//         movimiento.tipo === "prestamo"
-//       ) {
-//         nuevoStock -= +movimiento.cantidad;
-//       } else if (movimiento.tipo === "retorno") {
-//         nuevoStock += +movimiento.cantidad;
-//       }
-
-//       // Actualizar el documento del producto con el nuevo stock
-//       await updateDoc(productoDoc.ref, { stock: nuevoStock });
-//     } else {
-//       throw new Error("Producto no encontrado");
-//     }
-
-//     return { id: docRef.id, ...newMovimiento };
-//   } catch (error) {
-//     console.error("Error al crear el movimiento:", error);
-//     throw error;
-//   }
-// }; Asegúrate de importar correctamente tu configuración de Firebase
-
-// Función para crear un movimiento
 export const createMovimiento = async (movimiento: {
   tipo: "ingreso" | "salida" | "prestamo" | "retorno" | "transferencia";
-  producto: string; // Nombre del producto
+  producto: string;
   descripcion: string;
   cantidad: number;
   usuario: string;
@@ -160,72 +101,192 @@ export const createMovimiento = async (movimiento: {
   prestamoId?: string;
 }) => {
   try {
-    // 1. Crear el movimiento inicial
-    const newMovimiento = {
-      ...movimiento,
-      createdAt: serverTimestamp(),
-      status: "activo", // Estado inicial del movimiento
-    };
-
-    // Guardar el movimiento en la colección "movimientos"
-    const movimientosCollection = collection(db, "movimientos");
-    const docRef = await addDoc(movimientosCollection, newMovimiento);
-
-    // 2. Buscar el producto por su nombre
+    // 1. Buscar el producto
     const productosCollection = collection(db, "productos");
-    const q = query(
+    const productoQuery = query(
       productosCollection,
       where("name", "==", movimiento.producto)
     );
-    const querySnapshot = await getDocs(q);
+    const productoSnapshot = await getDocs(productoQuery);
 
-    if (querySnapshot.empty) {
-      throw new Error("Producto no encontrado en la colección 'productos'.");
+    if (productoSnapshot.empty) {
+      throw new Error("Producto no encontrado.");
     }
 
-    // Obtener el documento del producto encontrado
-    const productoDoc = querySnapshot.docs[0];
+    const productoDoc = productoSnapshot.docs[0];
     const productoData = productoDoc.data();
-    let nuevoStock = +productoData.stock;
+    let nuevoStockGlobal = +productoData.stock;
 
-    // 3. Actualizar el stock según el tipo de movimiento
+    // 2. Buscar áreas según sea necesario
+    const areasCollection = collection(db, "areas");
+
+    const obtenerAreaData = async (areaNombre: string) => {
+      const areaQuery = query(
+        areasCollection,
+        where("nombre", "==", areaNombre)
+      );
+      const areaSnapshot = await getDocs(areaQuery);
+
+      if (areaSnapshot.empty) {
+        throw new Error(`Área '${areaNombre}' no encontrada.`);
+      }
+
+      return areaSnapshot.docs[0];
+    };
+
+    const validarStockEnArea = async (
+      areaNombre: string,
+      producto: string,
+      cantidad: number
+    ) => {
+      const areaDoc = await obtenerAreaData(areaNombre);
+      const areaData = areaDoc.data();
+      const productosEnArea = areaData.productos || {};
+
+      if (!productosEnArea[producto]) {
+        throw new Error(
+          `El producto '${producto}' no está registrado en el área '${areaNombre}'.`
+        );
+      }
+
+      if (productosEnArea[producto].stock < cantidad) {
+        throw new Error(
+          `Stock insuficiente en el área '${areaNombre}' para el producto '${producto}'.`
+        );
+      }
+
+      return areaDoc;
+    };
+
+    const actualizarAreaStock = async (
+      areaDoc: any,
+      producto: string,
+      cantidad: number
+    ) => {
+      const areaData = areaDoc.data();
+      const productosEnArea = areaData.productos || {};
+
+      productosEnArea[producto].stock += cantidad;
+
+      if (productosEnArea[producto].stock < 0) {
+        throw new Error("El stock en el área no puede ser negativo.");
+      }
+
+      await updateDoc(areaDoc.ref, { productos: productosEnArea });
+    };
+
+    // 3. Validar y ajustar stock según tipo de movimiento
     switch (movimiento.tipo) {
       case "ingreso":
-        nuevoStock += movimiento.cantidad;
-        break;
-      case "salida":
-      case "prestamo":
-        nuevoStock -= movimiento.cantidad;
-        break;
-      case "retorno":
-        nuevoStock += movimiento.cantidad;
-        break;
-      case "transferencia":
-        if (!movimiento.tiendaDestino || !movimiento.tiendaOrigen) {
-          throw new Error(
-            "Para movimientos de transferencia se requiere 'tiendaDestino' y 'tiendaOrigen'."
+        nuevoStockGlobal += movimiento.cantidad;
+        if (movimiento.tiendaDestino) {
+          const areaDoc = await obtenerAreaData(movimiento.tiendaDestino);
+          await actualizarAreaStock(
+            areaDoc,
+            movimiento.producto,
+            movimiento.cantidad
           );
         }
-        nuevoStock -= movimiento.cantidad; // Reducir stock de la tienda origen
-        // Aquí podrías agregar lógica adicional para actualizar la tienda destino.
         break;
+
+      case "salida":
+        nuevoStockGlobal -= movimiento.cantidad;
+        if (movimiento.tiendaOrigen) {
+          const areaDoc = await validarStockEnArea(
+            movimiento.tiendaOrigen,
+            movimiento.producto,
+            movimiento.cantidad
+          );
+          await actualizarAreaStock(
+            areaDoc,
+            movimiento.producto,
+            -movimiento.cantidad
+          );
+        }
+        break;
+
+      case "prestamo":
+        if (movimiento.tiendaOrigen) {
+          const areaDoc = await validarStockEnArea(
+            movimiento.tiendaOrigen,
+            movimiento.producto,
+            movimiento.cantidad
+          );
+          await actualizarAreaStock(
+            areaDoc,
+            movimiento.producto,
+            -movimiento.cantidad
+          );
+        }
+        break;
+
+      case "retorno":
+        nuevoStockGlobal += movimiento.cantidad;
+        if (movimiento.tiendaOrigen) {
+          const areaDoc = await obtenerAreaData(movimiento.tiendaOrigen);
+          await actualizarAreaStock(
+            areaDoc,
+            movimiento.producto,
+            movimiento.cantidad
+          );
+        }
+        break;
+
+      case "transferencia":
+        if (!movimiento.tiendaOrigen || !movimiento.tiendaDestino) {
+          throw new Error(
+            "Para una transferencia, se requiere el área origen y destino."
+          );
+        }
+
+        const areaOrigenDoc = await validarStockEnArea(
+          movimiento.tiendaOrigen,
+          movimiento.producto,
+          movimiento.cantidad
+        );
+        const areaDestinoDoc = await obtenerAreaData(movimiento.tiendaDestino);
+
+        await actualizarAreaStock(
+          areaOrigenDoc,
+          movimiento.producto,
+          -movimiento.cantidad
+        );
+        await actualizarAreaStock(
+          areaDestinoDoc,
+          movimiento.producto,
+          movimiento.cantidad
+        );
+        break;
+
       default:
-        throw new Error("Tipo de movimiento no reconocido.");
+        throw new Error(`Tipo de movimiento desconocido: ${movimiento.tipo}`);
     }
 
-    // Validar que el stock no sea negativo
-    if (nuevoStock < 0) {
-      throw new Error("El stock no puede ser negativo.");
+    // 4. Validar stock global
+    if (nuevoStockGlobal < 0) {
+      throw new Error("El stock global no puede ser negativo.");
     }
 
-    // Actualizar el stock del producto en Firestore
-    await updateDoc(productoDoc.ref, { stock: nuevoStock });
+    // 5. Actualizar el stock global del producto
+    await updateDoc(productoDoc.ref, { stock: nuevoStockGlobal });
 
-    // 4. Devolver el resultado del movimiento
-    return { id: docRef.id, ...newMovimiento, stockActualizado: nuevoStock };
+    // 6. Si todas las validaciones pasan, crear el movimiento
+    const newMovimiento = {
+      ...movimiento,
+      createdAt: serverTimestamp(),
+      status: "activo",
+    };
+
+    const docRef = await addDoc(movimientosCollection, newMovimiento);
+
+    return {
+      id: docRef.id,
+      ...newMovimiento,
+      stockGlobal: nuevoStockGlobal,
+    };
   } catch (error) {
     console.error("Error al crear el movimiento:", error);
-    throw error;
+    throw error; // Interrumpe la ejecución y no realiza ninguna escritura
   }
 };
 

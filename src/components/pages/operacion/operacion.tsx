@@ -7,7 +7,7 @@ import EntradaOperations from "./op/entrada";
 import SalidaOperations from "./op/salida";
 import PrestamoOperations from "./op/prestamo";
 import RetornoOperations from "./op/retorno";
-import TransferenciaOperations from "./op/transferencia";
+// import TransferenciaOperations from "./op/transferencia";
 // import { ProductList } from "./inventario-list";
 
 export default function OperacionesPage() {
@@ -20,11 +20,11 @@ export default function OperacionesPage() {
     { id: "salida", label: "Salida", component: SalidaOperations },
     { id: "prestamo", label: "Préstamo", component: PrestamoOperations },
     { id: "retorno", label: "Retorno", component: RetornoOperations },
-    {
-      id: "transferencia",
-      label: "Transferencia",
-      component: TransferenciaOperations,
-    },
+    // {
+    //   id: "transferencia",
+    //   label: "Transferencia",
+    //   component: TransferenciaOperations,
+    // },
   ];
   return (
     <div className="container py-10 mx-auto">
@@ -34,7 +34,7 @@ export default function OperacionesPage() {
       <div className="flex gap-6">
         <div className={`flex-1 transition-all`}>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               {operations.map((op) => (
                 <TabsTrigger key={op.id} value={op.id}>
                   {op.label}

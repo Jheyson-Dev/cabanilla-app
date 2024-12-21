@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -38,6 +36,7 @@ import { convertTimestampToDetailedDate } from "@/util/format-date";
 import { Area } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Definir el esquema de validación con Yup
 const schema = yup.object().shape({
@@ -82,9 +81,6 @@ export default function SalidaOperations() {
     error: areasError,
   } = useAreas();
 
-  const mutation = useMutation({
-    mutationFn: (data: any) => createMovimiento(data),
-  });
   const queryClient = useQueryClient();
 
   const onSubmit = (data: any) => {
@@ -94,12 +90,19 @@ export default function SalidaOperations() {
       usuario: `${user?.name} ${user?.lastname}`,
     };
 
-    mutation.mutate(movimiento);
-    queryClient.invalidateQueries({
-      queryKey: ["movimientos", "salidas"],
-      exact: true,
+    toast.promise(createMovimiento(movimiento), {
+      success: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["movimientos", "salidas"],
+          exact: true,
+        });
+        return "Salida creada correctamente";
+      },
+      error: (error) => {
+        return `Ocurrio un error al crear la salida ${error.message}`;
+      },
+      loading: "Cargando...",
     });
-    toast.success("Salida creada correctamente");
 
     reset();
     setIsSheetOpen(false);
@@ -126,8 +129,6 @@ export default function SalidaOperations() {
               <TableHead>Observaciones</TableHead>
               <TableHead>Tienda Origen</TableHead>
               <TableHead>Cantidad</TableHead>
-
-              {/* <TableHead>Estado</TableHead> */}
               <TableHead>Fecha de Creación</TableHead>
             </TableRow>
           </TableHeader>
@@ -142,8 +143,6 @@ export default function SalidaOperations() {
                 </TableCell>
                 <TableCell>{row.tiendaOrigen}</TableCell>
                 <TableCell>{row.cantidad}</TableCell>
-
-                {/* <TableCell>{row.status}</TableCell> */}
                 <TableCell>
                   {convertTimestampToDetailedDate(row.createdAt)}
                 </TableCell>
@@ -282,9 +281,7 @@ export default function SalidaOperations() {
               </div>
             </div>
             <SheetFooter>
-              <Button type="submit" disabled={mutation.isLoading}>
-                {mutation.isLoading ? "Creando..." : "Crear"}
-              </Button>
+              <Button type="submit">Crear</Button>
             </SheetFooter>
           </form>
         </SheetContent>
